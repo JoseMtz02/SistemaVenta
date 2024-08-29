@@ -26,34 +26,27 @@ namespace SistemaVenta.Utility
             #endregion Menu
 
             #region Usuario
-            CreateMap<Usuario, UsuarioDTO>()
-                .ForMember(destino =>
-                    destino.RolDescripcion,
-                    opt => opt.MapFrom(origen => origen.IdRolNavigation.Nombre)
-                    )
-                .ForMember(destino =>
-                destino.EsActivo,
-                opt => opt.MapFrom(origen => origen.EsActivo == true ? 1 : 0)
-                );
 
+            CreateMap<Usuario, UsuarioDTO>()
+                .ForMember(destino => destino.RolDescripcion,
+                           opt => opt.MapFrom(origen => origen.IdRolNavigation != null ? origen.IdRolNavigation.Nombre : string.Empty)) 
+                .ForMember(destino => destino.EsActivo,
+                           opt => opt.MapFrom(origen => origen.EsActivo.HasValue && origen.EsActivo.Value ? 1 : 0));
             CreateMap<Usuario, SesionDTO>()
-               .ForMember(destino =>
-                destino.RolDescripcion,
-                opt => opt.MapFrom(origen => origen.IdRolNavigation.Nombre)
-               );
+    .ForMember(destino => destino.RolDescripcion,
+       opt => opt.MapFrom(origen => origen.IdRolNavigation != null ? origen.IdRolNavigation.Nombre : string.Empty));
+
+
+
 
             CreateMap<UsuarioDTO, Usuario>()
-                .ForMember(destino =>
-                destino.IdRolNavigation,
-                opt => opt.Ignore()
-                )
-                .ForMember(destino =>
-                destino.EsActivo,
-                opt => opt.MapFrom(origen => origen.EsActivo == 1 ?true:false)
-                );
-
+                .ForMember(destino => destino.IdRolNavigation,
+                           opt => opt.Ignore()) 
+                .ForMember(destino => destino.EsActivo,
+                           opt => opt.MapFrom(origen => origen.EsActivo.HasValue && origen.EsActivo.Value == 1)); 
 
             #endregion Usuario
+
 
             #region Categoria
             CreateMap<Categoria, CategoriaDTO>().ReverseMap();
